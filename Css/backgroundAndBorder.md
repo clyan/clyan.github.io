@@ -111,6 +111,9 @@ box-shadow: 0 0 0 20px #f4aab9 inset, 0 0 0 40px #66ccff inset;
     此时`box3` 的宽度为 width(100px) + padding(40px) = 140px; `box4` 的宽度为 100px;
 
 ### outline
+
+**语法：** outline: outline-color outline-width outline-style (不分顺序)
+
 使用outline设置多重边框，并且可以设置虚线边框，同时配合 `outline-offset` 负值可实现如下第二张图的缝边效果
 ```css
 .box5 {
@@ -133,10 +136,12 @@ box-shadow: 0 0 0 20px #f4aab9 inset, 0 0 0 40px #66ccff inset;
 **效果如下：** 
 ![](https://i.loli.net/2021/11/19/KkGdfnVJQYF5cLp.png)
 
+**注意：** outline 一般情况下只支持矩形， 不像border-radius可以设置圆角，只有在`Firefox`下 使用 `-moz-outline-radius` 设置，但是不推荐使用该功能，兼容性太差
+
+
 ### box-shadow 与 outline的区别
 `box-shadow` 不能实现虚线, 但可实现多层边框
 
 `outline` 只能设置一个值，只能实现边框，可以实现虚线边框
-
 
 [完整案例地址](https://codesandbox.io/s/css3zong-jie-w0ymf?file=/%E5%A4%9A%E9%87%8D%E8%BE%B9%E6%A1%86.html:389-425)
