@@ -402,7 +402,57 @@ const babel = require('gulp-babel')
 const swig = require('gulp-swig')
 const imagemin = require('gulp-imagemin')
 ```
-可以使用`gulp-load-plugins`
+
+可以使用`gulp-load-plugins`简化引用， 
 ```js
 npm i gulp-load-plugins -D
+```
+所有的插件都作为`plugins` 上的属性
+```js
+const loadPlugins = require('gulp-load-plugins')
+const plugins = loadPlugins()
+
+// 以font举例
+const font = () => {
+  return src('src/assets/fonts/**', { base: 'src' })
+    .pipe(plugins.imagemin()) // imagemin() 改成 plugins.imagemin()
+    .pipe(dest('dist'))
+}
+```
+
+### 开发服务器
+在开发阶段调试我们应用
+
+安装 `browser-sync`
+```bash
+npm install browser-sync -D
+```
+
+很好理解，使用watch监听文件，改变后刷新browser服务器
+```js
+const { src, dest, parallel, series, watch } = require('gulp')
+const serve = () => {
+  watch('src/assets/styles/*.scss', style) // 监听文件，重新执行任务
+  watch('src/assets/scripts/*.js', script)
+  watch('src/*.html', page)
+  watch([
+    'src/assets/images/**',
+    'src/assets/fonts/**',
+    'public/**'
+  ], bs.reload)
+
+  bs.init({
+    notify: false, 
+    port: 2080,
+    // open: false,
+    // files: 'dist/**', // 监听哪些文件改变后，刷新浏览器
+    server: {
+      baseDir: ['dist', 'src', 'public'], // 监听
+      // 开发阶段，如果html引入了node_modules中的资源，需要指定routes
+      routes: {
+        '/node_modules': 'node_modules' // 指向项目下的 node_modules
+      }
+    }
+  })
+}
 ```
