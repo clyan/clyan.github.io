@@ -456,3 +456,101 @@ const serve = () => {
   })
 }
 ```
+
+
+### 封装工作流
+gulp-file复用，如果我们开发多个项目，多个项目的构建任务一般都是相同的，涉及到复用问题，将任务拆解为各个代码段
+
+弊端： gulpfile散落在各个项目中，如果有部分出问题或升级，需要对各个项目做相同的操作，不利于整体的维护
+
+gulefile + gulp = 构建工作流
+
+
+#### 准备工作
+写好项目基本目录
+```txt
+- gulp-packaging
+  - lib
+    - index.js
+  - ChangeLOG.md
+  - package.json
+```
+
+使用changelog 自动生成commit记录
+```bash
+npm install -g conventional-changelog-cli
+```
+
+修改package.json
+```js
+  "scripts": {
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
+  },
+```
+#### 提取gulpfile
+将构建应用案例中的`gilefile`复制至lib/index.js中
+
+根据约定大于配置, 约定在项目目录下需要建立 `gulp.packaging.config.js`为`gulp-packaging`提供配置，
+
+修改`gulp-packaging`包中的`lib/index.js` 文件
+读取node运行时项目中的配置文件
+```js
+  // 获取node运行的当前目录
+  const cwd = process.cwd()
+  let config = {
+    build: {
+      src: "src",
+      dist: 'dist',
+      temp: 'temp',
+      public: 'public',
+      paths: {
+        styles: 'assets/styles/*.css',
+        scripts: 'assets/scripts/*.js',
+        pages: '*.html',
+        images: 'assets/images/**',
+        fonts: 'assets/fonts/**'
+      }
+    }
+  }
+  try {
+    const loadConfig = require(`${cwd}/gulp.packaging.config.js`)
+    // 默认配置进行合并
+    config = {...config, loadConfig}
+  } catch (error) {
+    
+  }
+```
+### 抽象路径
+> 用于拓展，方便使用者建立项目目录时自定义项目名称
+
+未抽取前
+```js
+const clean = () => {
+  return del(['dist', 'temp'])
+}
+
+const style = () => {
+  return src('src/assets/styles/*.scss', { base: 'src' })
+    .pipe(plugins.sass({ outputStyle: 'expanded' }))
+    .pipe(dest('temp'))
+    .pipe(bs.reload({ stream: true }))
+}
+```
+抽取后，使用config.build 的形式读取
+```js
+const clean = () => {
+  return del([config.build.dist, config.build.temp])
+}
+
+const style = () => {
+  return src(config.build.paths.styles, { base: config.build.src, cwd: config.build.src })
+    .pipe(plugins.sass({ outputStyle: 'expanded' }))
+    .pipe(dest(config.build.temp))
+    .pipe(bs.reload({ stream: true }))
+}
+```
+
+
+
+# 结语
+对于开发者而言，一开始需要技能，然后需要想法，想法建立在技能的基础之上，当技能能够满足想法的时候，想法越多越好
