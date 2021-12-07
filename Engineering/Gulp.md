@@ -606,6 +606,7 @@ module.exports = {
 **先看下不使用自定义命令怎么省略gulpfile配置**
 
 首先把`6-gulp-aplication`的gulpfile删除，执行`npx gulp build`, 提示错误，未找到gulpfile
+
 ![](https://s2.loli.net/2021/12/07/h4wXKSDvOpQ93eE.png)
 
 那我们就指定一个gulpfile就好了，在`6-gulp-aplication`目录中已经执行过`npm link gulp-packaging`
