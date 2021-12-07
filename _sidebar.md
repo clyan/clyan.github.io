@@ -12,3 +12,5 @@
   - [Gulp](Engineering/Gulp.md)
   - [代码规范](Engineering/Normalize.md)
   - [JSON生成器](Engineering/JSONHelper.md)
+- 书籍
+  - [认知觉醒](Engineering/CognitiveArousal.md)
