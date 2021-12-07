@@ -6,7 +6,9 @@
   - [Redux中间件](React/Redux-Middleware.md)
   - [React-Redux核心原理](React/React-Redux.md)
 - Vue
+  - [Vue3尝鲜体验](Vue/Vue3-One.md)
   - [Computed原理分析](Vue/Computed.md)
+  - [Vue包管理解析](Vue/Vue-Package.md)
 - 工程化
   - [Git常用命令及场景](Engineering/Git.md)
   - [模块化](Engineering/Module.md)
