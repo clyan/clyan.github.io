@@ -457,6 +457,29 @@ const serve = () => {
 }
 ```
 
+### 集成ESlint
+安装： `npx eslint --init`, `npm i gulp-eslint -D`
+```
+```
+```js
+import eslint from 'gulp-eslint'
+const script = () => {
+  return src('src/assets/scripts/*.js', { base: 'src' })
+    .pipe(eslint())
+    .pipe(eslint.format()) //格式化格式
+    .pipe(eslint.failAfterError()) //格式错误，终止运行
+    .pipe(babel({ presets: ['@babel/preset-env'] })) //注意传入preset-env进行转换
+    .pipe(dest('dist'))
+}
+module.exports = {
+  script
+}
+```
+执行`gulp script` 会报错, 需要修改版本 `eslint-config-standard`版本， [错误原因及解决办法](https://www.codeleading.com/article/22415009619/)
+
+```
+npm i eslint-config-standard@14.1.1 eslint-plugin-standard --dev
+```
 
 ### 封装工作流
 gulp-file复用，如果我们开发多个项目，多个项目的构建任务一般都是相同的，涉及到复用问题，将任务拆解为各个代码段
