@@ -681,10 +681,9 @@ copy({
 })
 ```
 
-到此，css与js的打包就差不多了，但是你会发现，打完包完的css与js还需要自己手动引入至html中，这很不方便，rollup更适合打包。
+到此，css与js的打包就差不多了，但是你会发现，打完包完的css与js还需要自己手动引入至html中，
 
-### rollup-plugin-bundle-html
-
+这很不方便你可以使用`rollup-plugin-bundle-html`解决一部分问题，但不推荐，很不好用，还是那句话，尽量不用rollup来打包css，或者来构建项目。
 
 ## 实时打包
 使用rollup的 watch模式即可, 加上`-w` 参数，保存文件时会自动重新打包
@@ -818,15 +817,16 @@ package.json
 
 # rollup的一些资料
 [官方文档](https://rollupjs.org/guide/en/#overview)
+
 [rollup/awesome 插件集](https://github.com/rollup/awesome)
 
 [Rollup Plugins](https://github.com/rollup/plugins)
 
-https://juejin.cn/post/6844904058394771470#heading-16
-https://juejin.cn/post/6934698510436859912#heading-5
-https://rollupjs.org/guide/en/#overview
-https://github.com/rollup/awesome
-https://juejin.cn/post/6844903731343933453#heading-21
-https://zhuanlan.zhihu.com/p/95119407
-https://juejin.cn/post/6962088402174869517#heading-4
-https://segmentfault.com/a/1190000010628352
+[Rollup打包工具的使用（超详细，超基础，附代码截图超简单）](https://juejin.cn/post/6934698510436859912#heading-5)
+
+[使用 rollup 打包 JS](https://juejin.cn/post/6844903731343933453#heading-21)
+
+[如何使用rollup打包前端组件/库](https://zhuanlan.zhihu.com/p/95119407)
+
+[用 RollupJs 从 0 搭建一个属于自己的 vue 组件库](https://juejin.cn/post/6962088402174869517#heading-4)
+[JS打包工具rollup——完全入门指南](https://segmentfault.com/a/1190000010628352)
