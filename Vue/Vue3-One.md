@@ -1,6 +1,6 @@
 ## 初始化
 
-### **安装@vue/cli@next：**
+### **安装@vue/cli@next**
 
 ```javascript
 yarn global add @vue/cli@next
@@ -8,7 +8,7 @@ yarn global add @vue/cli@next
 npm install -g @vue/cli@next
 ```
 
-### **然后在 Vue 项目运行：**
+### **然后在 Vue 项目运行**
 
 ```bash
 vue upgrade --next
@@ -46,7 +46,7 @@ vue3-template
 └── vite.config.js	// vite配置目录
 ```
 
-### **vite创建项目：**
+## **vite创建项目**
 
 ```javascript
 npm init vite-app <project-name>
@@ -55,7 +55,7 @@ npm install
 npm run dev
 ```
 
-## **vite项目配置：**
+## **vite项目配置**
 
 [vite配置文档](https://vitejs.dev/config/#config-file-resolving)
 
@@ -274,3 +274,6 @@ PermitRootLogin yes
 service sshd restart
 ```
 
+## 仓库地址
+
+https://github.com/ywymoshi/vue3-template
