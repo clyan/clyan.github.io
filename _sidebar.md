@@ -10,4 +10,5 @@
   - [模块化](Engineering/Module.md)
   - [Rollup](Engineering/Rollup.md)
   - [Gulp](Engineering/Gulp.md)
+  - [代码规范](Engineering/Normalize.md)
   - [JSON生成器](Engineering/JSONHelper.md)
