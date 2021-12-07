@@ -250,3 +250,141 @@ background-repeat 属性用来设置背景图像铺排填充方式, 默认值: r
 **注意:** `background-repeat` 的 `round/space` 属性, 部分Firefox版本不支持。
 
 使用 [MDN 在线调试background-repeat](https://developer.mozilla.org/en-US/docs/Web/CSS/background-repeat) 查看效果更直观些
+
+## 圆角
+### border-radius
+
+**简述：**用于设置盒子的边角形状， 当垂直半径与水平半径相等时，表现的是一个圆角，不相等时，则是一个椭圆角
+
+**语法：** 
+
+borde-radius:  水平 / 垂直 
+
+是以下属性的简写
+
+**border-radius：** 
+
+​	(左上)border-top-left-radius    (右上)border-top-right-radius    
+
+​	(右下)border-bottom-right-radius    (左下)border-bottom-left-radius
+
+​	`水平 / 垂直` 的取值都是四个角的水平 / 垂直的缩写， `/`两边都各自按 TRBL 顺序取值。
+
+**TRBL指的是：** 上右下左，对于border-radius而言则是：`左上`、`右上`、`左下`、`右下 `
+
+**当只设置 `/` 一边的值时，代表的是水平与垂直的半径一致，也就是圆角，规则如下**
+
+**1个属性值时：**
+
+​	**例：**border-radius: 20px; 代表的是: border-radius: 20px 20px 20px 20px
+
+**2个属性时:**
+
+​	**例：**border-radius: 20px  30px; 代表的是: border-radius: 20px 30px 20px 30px
+
+​	**20px设置的是：** `左上` 与 `右下`
+
+​	**30px设置的是：** `右上` 与 `左下`
+
+**3个属性时:**
+
+​	**例：** border-radius: 20px  30px 50px; 代表的是： border-radius: 20px 30px 50px 30px
+
+​	**20px设置的是：** `左上` 
+
+​	**30px设置的是：** `右上` 与 `左下`
+
+​	**50px设置的是：** `右下`
+
+**4个属性时:**  `左上` `右上`   `右下`   `左下` 一 一对应 border-radius: 20px 30px 40px 50px
+
+以上的规则都适用`水平/ 垂直`的简写: 以4个属性为例子：
+
+水平 / 垂直保持一致
+```
+  border-top-left-radius: 20px 20px;
+  border-top-right-radius: 30px 30px;
+  border-bottom-left-radius: 40px 40px;
+  border-bottom-right-radius: 50px 50px;
+```
+所以表现的是圆角
+
+**border-left-top-radius：** 
+
+![](https://s2.loli.net/2021/12/08/I7xG8lH6fDiZkAc.png)
+
+**语法：** 
+
+border-top-left-radius: 水平  垂直
+
+如： border-top-left-radius: 10px 20px;
+
+### 当设置50%与100%的区别
+
+**当使用border-radius时设置四个角：**  使用50% 与100%无区别
+
+```html
+.box {
+    background: #ccc;
+    height: 100px;
+    width: 100px;
+    margin-right: 10px;
+}
+.box11 {
+	border-radius: 50%;	
+}
+.box12 {
+	border-radius: 100%;
+}
+<div class="box box12"></div>
+<div class="box box13"></div>
+```
+
+![](https://s2.loli.net/2021/12/08/cMj5R3d4oJlr9n1.png)
+
+当只设置一个角时与两个角时：设置100%
+
+如果两个相邻角的半径之和超过了相应盒子边的长度，那么浏览器要重新计算，以保证两者不会重合。
+
+假设有一个 100px 的盒子，若 **border-top-left-radius:100%;** 则盒子会变成一个半径为 100px 的 1/4圆。（如下图左）
+
+这个时候，如果我们再给一个 **border-top-right-radius:100%;** 此时相邻的两个角的半径之和已经超过了盒子的长度，浏览器需要重新计算。计算的规则就是同时缩放两个圆角的半径，直至两个相邻角的半径和为盒子的长度。也就是说，当两个圆角的半径为 **50%** 的时候，圆角正好符合 W3C 标准。（下图右）
+
+```html
+.box13 {
+    border-top-left-radius: 100%;
+    border-top-right-radius: 100%;
+}
+.box14 {
+	border-top-left-radius: 100%;
+}      
+<div class="box box13"></div>
+<div class="box box14"></div>
+```
+
+![](https://s2.loli.net/2021/12/08/4A32emOcYjSEKXU.png)
+
+### 其他注意点
+
+当border-radius的值设置大于border的宽度时，内半径会出现圆角
+
+```css
+border: 15px solid green;
+border-radius: 25px;
+```
+![](https://s2.loli.net/2021/12/08/tGoFAhxXlkjZgEe.png)
+
+border-radius小于等于border时
+```css
+border: 15px solid green;
+border-radius: 15px;
+```
+
+![](https://s2.loli.net/2021/12/08/lxK1oEaXTqdsy4t.png)
+
+
+**详解链接：** https://www.cnblogs.com/lhb25/archive/2013/01/30/css3-border-radius.html
+
+**上面的demo地址:**  [codeSandbox](https://codesandbox.io/s/css3zong-jie-w0ymf?file=/borderRadius.html)
+
+**参考地址：** [MDN border-radius](https://developer.mozilla.org/zh-CN/docs/Web/CSS/border-radius) [MDN border-top-left-radius ](https://developer.mozilla.org/zh-CN/docs/Web/CSS/border-top-left-radius)  [菜鸟教程](https://www.runoob.com/css3/css3-border-radius.html)
