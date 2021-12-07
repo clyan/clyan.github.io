@@ -204,7 +204,7 @@ exports.default = () => {
 
 **先准备好一个案例：**
 
-目录结构如下：
+`6-gulp-aplication`目录结构如下：
 ![](https://i.loli.net/2021/11/29/x14htZsHcdUJPzE.png)
 
 ### 样式编译
@@ -421,14 +421,14 @@ const font = () => {
 ```
 
 ### 开发服务器
-在开发阶段调试我们应用
+在开发阶段,实时调试我们的代码，就需要实时编译
 
 安装 `browser-sync`
 ```bash
 npm install browser-sync -D
 ```
 
-很好理解，使用watch监听文件，改变后刷新browser服务器
+很好理解，使用`watch`监听文件，改变后刷新`browser`服务器
 ```js
 const { src, dest, parallel, series, watch } = require('gulp')
 const serve = () => {
@@ -458,9 +458,10 @@ const serve = () => {
 ```
 
 ### 集成ESlint
+用于在打包编译前，格式化我的代码，同时格式化出错时，终止运行
+
 安装： `npx eslint --init`, `npm i gulp-eslint -D`
-```
-```
+
 ```js
 import eslint from 'gulp-eslint'
 const script = () => {
@@ -482,15 +483,16 @@ npm i eslint-config-standard@14.1.1 eslint-plugin-standard --dev
 ```
 
 ### 封装工作流
-gulp-file复用，如果我们开发多个项目，多个项目的构建任务一般都是相同的，涉及到复用问题，将任务拆解为各个代码段
+如果我们开发多个项目，多个项目的构建任务一般都是相同的，涉及到gulpfile复用问题，可以在多个项目中使用同一个gulpfile
 
 弊端： gulpfile散落在各个项目中，如果有部分出问题或升级，需要对各个项目做相同的操作，不利于整体的维护
 
-gulefile + gulp = 构建工作流
+
+封装gulp方便使用，gulefile + gulp = 构建工作流
 
 
 #### 准备工作
-写好项目基本目录
+新建项目`gulp-packaging`写好项目基本目录
 ```txt
 - gulp-packaging
   - lib
@@ -498,6 +500,13 @@ gulefile + gulp = 构建工作流
   - ChangeLOG.md
   - package.json
 ```
+并修改package.json
+```js
+{
+  main:"./lib/index.js"
+}
+```
+
 
 使用changelog 自动生成commit记录
 ```bash
@@ -511,12 +520,25 @@ npm install -g conventional-changelog-cli
   },
 ```
 #### 提取gulpfile
-将构建应用案例中的`gilefile`复制至lib/index.js中
 
-根据约定大于配置, 约定在项目目录下需要建立 `gulp.packaging.config.js`为`gulp-packaging`提供配置，
+将上面`构建一个完整的应用`案例中的完整`gilefile`复制至lib/index.js中, 然后修改`gulp-packaging`包中的`lib/index.js` 文件
 
-修改`gulp-packaging`包中的`lib/index.js` 文件
-读取node运行时项目中的配置文件
+本地调试`gulp-packaging`， 执行`npm link`, 然后在`6-gulp-aplication`目录下执行`npm link gulp-packaging` 
+
+同时修改`6-gulp-aplication`中的`gulpfile`如下
+```js
+module.exports = require("gulp-packaging")
+```
+在`6-gulp-aplication`目录下执行`gulp build`（如果提示gulp不是可执行的命令，则执行npx gulp build） 依旧可以执行打包任务
+
+**但存在几个问题：**
+1. 项目目录不能够自定义
+2. gulpfile仅仅只起到一个引入导出的作用，显得冗余
+
+### 扩展配置
+> 使使用者可以自定义打包路径及项目目录
+在`gulp-packaging`的`lib/index.js`中添加如下内容，用于读取用户使用时目录下的`gulp.packaging.config.js`
+
 ```js
   // 获取node运行的当前目录
   const cwd = process.cwd()
@@ -542,38 +564,108 @@ npm install -g conventional-changelog-cli
   } catch (error) {
     
   }
+  ......省略
+  const clean = () => {
+    // 使用config.build.dist动态配置路径
+    return del([config.build.dist, config.build.temp])
+  }
+  ......省略
+  const style = () => {
+    return src(config.build.paths.styles, { base: config.build.src, cwd: config.build.src })
+      .pipe(plugins.sass({ outputStyle: 'expanded' }))
+      .pipe(dest(config.build.temp))
+      .pipe(bs.reload({ stream: true }))
+  }
 ```
-### 抽象路径
-> 用于拓展，方便使用者建立项目目录时自定义项目名称
+根据约定大于配置, 约定在项目目录下需要建立 `gulp.packaging.config.js`为`gulp-packaging`提供配置
 
-未抽取前
+`6-gulp-aplication` 下新建 `gulp.packaging.config.js`
 ```js
-const clean = () => {
-  return del(['dist', 'temp'])
-}
-
-const style = () => {
-  return src('src/assets/styles/*.scss', { base: 'src' })
-    .pipe(plugins.sass({ outputStyle: 'expanded' }))
-    .pipe(dest('temp'))
-    .pipe(bs.reload({ stream: true }))
+module.exports = {
+    build: {
+        src: "src",
+        dist: 'release',
+        temp: '.temp',
+        public: 'public',
+        paths: {
+            styles: 'assets/styles/*.css',
+            scripts: 'assets/scripts/*.js',
+            pages: '*.html',
+            images: 'assets/images/**',
+            fonts: 'assets/fonts/**'
+        }
+    }
 }
 ```
-抽取后，使用config.build 的形式读取
+
+修改完以后，就可以自定义项目目录及打包路径了~~~
+
+### 自定义命令
+> 使用自定义命令，使用时将gulpfile省略
+
+**先看下不使用自定义命令怎么省略gulpfile配置**
+
+首先把`6-gulp-aplication`的gulpfile删除，执行`npx gulp build`, 提示错误，未找到gulpfile
+![](https://s2.loli.net/2021/12/07/h4wXKSDvOpQ93eE.png)
+
+那我们就指定一个gulpfile就好了，在`6-gulp-aplication`目录中已经执行过`npm link gulp-packaging`
+
+那么就可以在`node_modules`中找到`gulp-packaging`下的 `lib/index.js`
+
+![](https://s2.loli.net/2021/12/07/67ATk4rVy3bhzIP.png)
+
+执行`npx gulp build --gulpfile ./node_modules/gulp-packaging/lib/index.js`
+
+![](https://s2.loli.net/2021/12/07/Y6hQz1EjKUAy2cx.png)
+
+那么也能够成功编译构建。
+
+**使用自定义命令简化开发**
+
+由上面可以知道，我们只需要指定一个gulpfile文件即可
+
+首先在`gulp-packaging`的package.json中添加
 ```js
-const clean = () => {
-  return del([config.build.dist, config.build.temp])
-}
-
-const style = () => {
-  return src(config.build.paths.styles, { base: config.build.src, cwd: config.build.src })
-    .pipe(plugins.sass({ outputStyle: 'expanded' }))
-    .pipe(dest(config.build.temp))
-    .pipe(bs.reload({ stream: true }))
-}
+  "bin": {
+    "gulp-pack": "./bin/gulp-packaging.js"
+  },
 ```
+新增`bin/gulp-packaging.js`
+```js
+#!/usr/bin/env node
+process.argv.push('--cwd')
+process.argv.push(process.cwd())
+process.argv.push('--gulpfile')
+// require.resolve() 找到这个模块所对应的路径, ..默认会找当前目录下
+process.argv.push(require.resolve('..'))
+// console.log(process.argv)
+require('gulp/bin/gulp')
+```
+首先使用`process.argv` 指定gulp运行参数，然后再引入`gulp/bin/gulp` 执行gulp命令，就达到了一个自动指定gulpfile并执行gulp的一个作用
+
+接着再执行`npm link`(如果出错，先执行npm unlink), 在`6-gulp-aplication`中 `npm link gulp-packaging`
+
+修改`6-gulp-aplication`中的package.json
+```json
+  "scripts": {
+    "clean": "gulp-pack clean",
+    "build": "gulp-pack build",
+    "develop": "gulp-pack develop"
+  },
+```
+执行`npm run build`
+
+![](https://s2.loli.net/2021/12/07/hT1doyMS3FL4BJg.png)
 
 
+### 发布gulp-packaging
 
+`npm login`: 输入自己的npm账号密码
+
+`npm publish`: 发布
+
+过一小会，就能在自己的npm仓库看到啦~~~
+
+![](https://s2.loli.net/2021/12/07/hUKNOjzgBcfe6wX.png)
 # 结语
 对于开发者而言，一开始需要技能，然后需要想法，想法建立在技能的基础之上，当技能能够满足想法的时候，想法越多越好
